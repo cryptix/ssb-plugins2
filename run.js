@@ -10,7 +10,6 @@ function run(path, localCall) {
     localCall,
     require('packet-stream-codec'),
     function onClose() {
-      // ??
       proc.kill(9)
     }
   )
@@ -27,8 +26,7 @@ function run(path, localCall) {
   )
 
   return {
-    //sream... you mean stream?
-    sream: stream.remoteCall,
+    stream: stream.remoteCall,
     proc: proc,
   }
 }
@@ -36,13 +34,13 @@ function run(path, localCall) {
 // load and run the module
 // must have a manifest.json or this will throw
 module.exports = (pluginPath, localCall) => {
-  const { proc, sream } = run(
+  const { proc, stream } = run(
     path.join(pluginPath, 'bin'),
     localCall
   )
   return {
     proc: proc,
-    child: sream,
+    child: stream,
     //needed by test/standalone otherwise remove this
     manifest: require(path.join(pluginPath, 'manifest.json'))
   }
