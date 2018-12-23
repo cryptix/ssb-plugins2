@@ -1,10 +1,16 @@
 const test = require('tape')
 const { join } = require('path')
 
+function localStub(type, name, args) {
+  console.log('CALLED', type, name, args)
+  var cb = args.pop()
+  cb(null, { okay: true })
+}
+
 test('standalone: kill from host', (t) => {
     const plugPath = join(process.cwd(), 'example')
 
-    var { proc, child, manifest } = require('../run')(plugPath)
+    var { proc, child, manifest } = require('../run')(plugPath, localStub)
     var api = require('muxrpc/api')({}, manifest, child)
 
     api.callback('bob', (err, value) => {
@@ -22,7 +28,7 @@ test('standalone: kill from host', (t) => {
 test('standalone: let child crash', (t) => {
     const plugPath = join(process.cwd(), 'example')
 
-    var { child, manifest } = require('../run')(plugPath)
+    var { child, manifest } = require('../run')(plugPath, localStub)
     var api = require('muxrpc/api')({}, manifest, child)
 
     api.callback('bob', (err, value) => {
@@ -39,7 +45,7 @@ test('standalone: let child crash', (t) => {
 test('standalone: goodbye', (t) => {
     const plugPath = join(process.cwd(), 'example')
 
-    var { child, manifest } = require('../run')(plugPath)
+    var { child, manifest } = require('../run')(plugPath, localStub)
     var api = require('muxrpc/api')({}, manifest, child)
 
     api.callback('bob', (err, value) => {

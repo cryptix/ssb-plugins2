@@ -17,7 +17,13 @@ try {
   process.exit(1)
 }
 
-var {child, manifest} = require('./run')(pluginPath)
+function localStub(type, name, args) {
+  console.log('CALLED', type, name, args)
+  var cb = args.pop()
+  cb(null, { okay: true })
+}
+
+var {child, manifest} = require('./run')(pluginPath, localStub)
 var api = require('muxrpc/api')({}, manifest, child)
 
 api.callback('bob', function (err, value) {
